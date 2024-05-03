@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Click Example</title>
+</head>
+<body>
+    <button id="setButton">Set Cookie</button>
+    <button id="readButton">Read Cookie</button>
+    <script>
+        var setButton = document.getElementById('setButton');
+        var readButton = document.getElementById('readButton');
+
+        async function setCookie() {
+            if (!document.hasStorageAccess) {
+                document.cookie = 'cookie1=test; Path=/; Secure; SameSite=None';
+            } else {
+                const hasAccess = await document.hasStorageAccess();
+                if (hasAccess) {
+                    document.cookie = 'cookie1=test; Path=/; Secure; SameSite=None';
+                } else {
+                    await document.requestStorageAccess();
+                    const hasAccess = await document.hasStorageAccess();
+                    console.log("hasAccess", hasAccess);
+                    document.cookie = 'cookie1=test; Path=/; Secure; SameSite=None';
+                }
+            }
+        }
+
+        async function readCookie() {
+            console.log("Without Access: Found this cookie ->", document.cookie);
+            if (!document.hasStorageAccess) {
+                console.log("Found this cookie ->", document.cookie);
+            } else {
+                const hasAccess = await document.hasStorageAccess();
+                if (hasAccess) {
+                    console.log("Found this cookie ->", document.cookie);
+                } else {
+                    await document.requestStorageAccess();
+                    const hasAccess = await document.hasStorageAccess();
+                    console.log("hasAccess", hasAccess);
+                    console.log("Found this cookie ->", document.cookie);
+                }
+            }
+        }
+
+        // window.onload = () => {
+        //     const search = new URLSearchParams(window.location.search);
+        //     if (search.get("setCookie"))  setTimeout(setCookie, 2000);
+        //     else readCookie();
+        // }
+
+        document.addEventListener("mouseover", () => {
+            const search = new URLSearchParams(window.location.search);
+            if (search.get("setCookie"))  setTimeout(setCookie, 2000);
+            else readCookie();
+        });
+
+        setButton.onclick = setCookie;
+        readButton.onclick = readCookie;
+    </script>
+</body>
+</html>
