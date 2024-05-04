@@ -15,17 +15,18 @@
         var readButton = document.getElementById('readButton');
 
         async function setCookie() {
+            document.cookie = 'cookieL=testL; Path=/; Secure; SameSite=None';
             if (!document.hasStorageAccess) {
-                document.cookie = 'cookie1=test; Path=/; Secure; SameSite=None';
+                document.cookie = 'cookieC=testC; Path=/; Secure; SameSite=None';
             } else {
                 const hasAccess = await document.hasStorageAccess();
                 if (hasAccess) {
-                    document.cookie = 'cookie1=test; Path=/; Secure; SameSite=None';
+                    document.cookie = 'cookieF=testF; Path=/; Secure; SameSite=None';
                 } else {
                     await document.requestStorageAccess();
                     const hasAccess = await document.hasStorageAccess();
                     console.log("hasAccess", hasAccess);
-                    document.cookie = 'cookie1=test; Path=/; Secure; SameSite=None';
+                    document.cookie = 'cookieG=testG; Path=/; Secure; SameSite=None';
                 }
             }
         }
@@ -47,11 +48,11 @@
             }
         }
 
-        // window.onload = () => {
-        //     const search = new URLSearchParams(window.location.search);
-        //     if (search.get("setCookie"))  setTimeout(setCookie, 2000);
-        //     else readCookie();
-        // }
+         window.onload = () => {
+             const search = new URLSearchParams(window.location.search);
+             if (search.get("setCookie"))  setTimeout(setCookie, 2000);
+             else readCookie();
+         }
 
         /**document.addEventListener("mouseover", () => {
             const search = new URLSearchParams(window.location.search);
