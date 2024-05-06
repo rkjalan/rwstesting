@@ -70,8 +70,10 @@
             if (hasAccess) {
                 if (search.get("setCookie")) {
                     document.cookie = 'cookieOnLoad=testOnLoad; Path=/; Secure; SameSite=None';
+                    setCookie();
                 } else {
                     console.log("Onload: Found this cookie ->", document.cookie);
+                    readCookie();
                 }
             }
         }
@@ -106,12 +108,10 @@
             } else {
                 const hasAccess = await document.hasStorageAccess();
                 if (hasAccess) {
-                    console.log("Found this cookie ->", document.cookie);
+                    console.log("Already granted, Found this cookie ->", document.cookie);
                 } else {
                     await document.requestStorageAccess();
-                    const hasAccess = await document.hasStorageAccess();
-                    console.log("hasAccess", hasAccess);
-                    console.log("Found this cookie ->", document.cookie);
+                    console.log("Access request success, Found this cookie ->", document.cookie);
                 }
             }
         }
