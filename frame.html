@@ -70,10 +70,12 @@
             if (hasAccess) {
                 if (search.get("setCookie")) {
                     document.cookie = 'cookieOnLoad=testOnLoad; Path=/; Secure; SameSite=None';
-                    setCookie();
+                    await setCookie();
+                    console.log("Waiting to read cookies .....");
+                    setTimeout(readCookie, 2000)
                 } else {
                     console.log("Onload: Found this cookie ->", document.cookie);
-                    readCookie();
+                    await readCookie();
                 }
             }
         }
