@@ -7,22 +7,6 @@
 </head>
 <body>
     <script>
-
-        (function () {
-            if (!console) {
-                console = {};
-            }
-            var old = console.log;
-            var logger = document.getElementById('log');
-            console.log = function (message) {
-                if (typeof message == 'object') {
-                    logger.innerHTML += (JSON && JSON.stringify ? JSON.stringify(message) : String(message)) + '<br />';
-                } else {
-                    logger.innerHTML += message + '<br />';
-                }
-            }
-        })();
-
         // Set a hasAccess boolean variable which defaults to false except for browsers which don't support the API - where we assume
         // such browsers also don't block third-party cookies.
         let hasAccess = false;
@@ -121,12 +105,27 @@
                 }
             }
 
-            // By default return false, though should really be caught by one of above.
+     /*       // By default return false, though should really be caught by one of above.
             console.log("Unexpected return");
-            return false;
+            return false;*/
         }
 
         window.onload = async () => {
+            (function () {
+                if (!console) {
+                    console = {};
+                }
+                var old = console.log;
+                var logger = document.getElementById('log');
+                console.log = function (message) {
+                    if (typeof message == 'object') {
+                        logger.innerHTML += (JSON && JSON.stringify ? JSON.stringify(message) : String(message)) + '<br />';
+                    } else {
+                        logger.innerHTML += message + '<br />';
+                    }
+                }
+            })();
+
             const search = new URLSearchParams(window.location.search);
             if (search.get("setCookie")) {
                 writeCookies();
