@@ -119,7 +119,7 @@
                 var logger = document.getElementById('log');
                 console.log = function (message, obj) {
                     if (obj) {
-                        logger.innerHTML += message + ' ' + (JSON && JSON.stringify ? JSON.stringify(obj) : String(obj)) + '<br />';
+                        logger.innerHTML += message + obj + '<br />';
                     } else {
                         logger.innerHTML += message + '<br />';
                     }
