@@ -57,8 +57,8 @@
             }
 
             // By default return false, though should really be caught by one of above.
-            console.log("Unexpected return");
-            return false;
+/*            console.log("Unexpected return");
+            return false;*/
         }
 
 
@@ -117,9 +117,9 @@
                 }
                 var old = console.log;
                 var logger = document.getElementById('log');
-                console.log = function (message) {
-                    if (typeof message == 'object') {
-                        logger.innerHTML += (JSON && JSON.stringify ? JSON.stringify(message) : String(message)) + '<br />';
+                console.log = function (message, obj) {
+                    if (obj) {
+                        logger.innerHTML += message + ' ' + (JSON && JSON.stringify ? JSON.stringify(message) : String(message)) + '<br />';
                     } else {
                         logger.innerHTML += message + '<br />';
                     }
@@ -128,9 +128,12 @@
 
             const search = new URLSearchParams(window.location.search);
             if (search.get("setCookie")) {
-                writeCookies();
-                console.log("Waiting to read cookies .....");
-                setTimeout(readCookies, 2000)
+                await writeCookies();
+
+                setTimeout(() => {
+                    console.log("Waiting to read cookies .....");
+                    readCookies();
+                }, 2000);
             } else {
                 await readCookies();
             }
