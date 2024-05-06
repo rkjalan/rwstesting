@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Click Example</title>
+</head>
+<body>
+    <button id="setButton">Set Cookie</button>
+    <button id="readButton">Read Cookie</button>
+    <script>
+        // Set a hasAccess boolean variable which defaults to false except for browsers which don't support the API - where we assume
+        // such browsers also don't block third-party cookies.
+        let hasAccess = false;
+
+        async function hasCookieAccess() {
+            if (!document.requestStorageAccess) {
+                console.log("Storage Access API is not supported, it might be an older browser that doesn't block 3P cookies. ");
+                return true;
+            }
+            if (await document.hasStorageAccess()) {
+                console.log("access has already been granted");
+                return true;
+            }
+
+            // Check the storage-access permission. Wrap this in a try/catch for browsers that support the Storage Access API but not this permission check
+            // (e.g. Safari and older versions of Firefox).
+            let permission;
+            try {
+                permission = await navigator.permissions.query({name: 'storage-access'});
+            } catch (error) {
+                console.log("storage-access permission not supported. Assume no cookie access.");
+                return false;
+            }
+
+            if (permission) {
+                if (permission.state === 'granted') {
+                    // Permission has previously been granted so can just call requestStorageAccess() without a user interaction and
+                    // it will resolve automatically.
+                    console.log("Permission has previously been granted");
+                    try {
+                        await document.requestStorageAccess();
+                        return true;
+                    } catch (error) {
+                        // This shouldn't really fail if access is granted, but return false
+                        console.log("Permission request failed due to error", error);
+                        return false;
+                    }
+                } else if (permission.state === 'prompt') {
+                    // Need to call requestStorageAccess() after a user interaction (potentially with a prompt). Can't do anything further here,
+                    // so handle this in the click handler.
+                    console.log("Need to call requestStorageAccess() after a user interaction");
+                    return false;
+                } else if (permission.state === 'denied') {
+                    // Currently not used. See: https://github.com/privacycg/storage-access/issues/149
+                    console.log("Call to requestStorageAccess() was denied");
+                    return false;
+                }
+            }
+
+            // By default return false, though should really be caught by one of above.
+            console.log("Unexpected return");
+            return false;
+        }
+
+
+        window.onload = async () => {
+            const search = new URLSearchParams(window.location.search);
+            hasAccess = await hasCookieAccess();
+            if (hasAccess) {
+                if (search.get("setCookie")) {
+                    document.cookie = 'cookieOnLoad=testOnLoad; Path=/; Secure; SameSite=None';
+                } else {
+                    console.log("Onload: Found this cookie ->", document.cookie);
+                }
+            }
+        }
+
+    </script>
+
+    <script>
+        var setButton = document.getElementById('setButton');
+        var readButton = document.getElementById('readButton');
+
+        async function setCookie() {
+            document.cookie = 'cookieL=testL; Path=/; Secure; SameSite=None';
+            if (!document.hasStorageAccess) {
+                document.cookie = 'cookieC=testC; Path=/; Secure; SameSite=None';
+            } else {
+                const hasAccess = await document.hasStorageAccess();
+                if (hasAccess) {
+                    document.cookie = 'cookieF=testF; Path=/; Secure; SameSite=None';
+                } else {
+                    await document.requestStorageAccess();
+                    const hasAccess = await document.hasStorageAccess();
+                    console.log("hasAccess", hasAccess);
+                    document.cookie = 'cookieG=testG; Path=/; Secure; SameSite=None';
+                }
+            }
+        }
+
+        async function readCookie() {
+            console.log("Without Access: Found this cookie ->", document.cookie);
+            if (!document.hasStorageAccess) {
+                console.log("Found this cookie ->", document.cookie);
+            } else {
+                const hasAccess = await document.hasStorageAccess();
+                if (hasAccess) {
+                    console.log("Found this cookie ->", document.cookie);
+                } else {
+                    await document.requestStorageAccess();
+                    const hasAccess = await document.hasStorageAccess();
+                    console.log("hasAccess", hasAccess);
+                    console.log("Found this cookie ->", document.cookie);
+                }
+            }
+        }
+
+/*         window.onload = () => {
+             const search = new URLSearchParams(window.location.search);
+             if (search.get("setCookie"))  setTimeout(setCookie, 2000);
+             else readCookie();
+         }*/
+
+        setButton.onclick = setCookie;
+        readButton.onclick = readCookie;
+    </script>
+</body>
+</html>
