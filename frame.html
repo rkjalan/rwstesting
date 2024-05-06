@@ -115,9 +115,9 @@
             if (search.get("setCookie")) {
                 writeCookies();
                 console.log("Waiting to read cookies .....");
-                setTimeout(console.log("Found these cookie ->", readCookies), 2000)
+                setTimeout(readCookies, 2000)
             } else {
-                readCookies();
+                await readCookies();
             }
 
         }
