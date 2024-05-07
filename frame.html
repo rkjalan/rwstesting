@@ -129,14 +129,15 @@
             const search = new URLSearchParams(window.location.search);
             if (search.get("setCookie")) {
                 await writeCookies();
-
+                console.log("Waiting to read cookies .....");
                 setTimeout(() => {
-                    console.log("Waiting to read cookies .....");
+
                     setTimeout(readCookies, 2000);
                 }, 2000);
             } else {
+                console.log("Waiting to read cookies .....");
                 setTimeout(() => {
-                    console.log("Waiting to read cookies .....");
+
                     setTimeout(readCookies, 2000);
                 }, 2000);
             }
