@@ -132,10 +132,13 @@
 
                 setTimeout(() => {
                     console.log("Waiting to read cookies .....");
-                    readCookies();
+                    setTimeout(readCookies, 2000);
                 }, 2000);
             } else {
-                await readCookies();
+                setTimeout(() => {
+                    console.log("Waiting to read cookies .....");
+                    setTimeout(readCookies, 2000);
+                }, 2000);
             }
 
         }
